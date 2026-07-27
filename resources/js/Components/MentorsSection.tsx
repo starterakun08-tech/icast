@@ -14,10 +14,10 @@ const M16 = 'clamp(12px, 0.83vw, 16px)';  // Merriweather Regular 16 for descrip
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, delay }}
+            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.7, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
         >
             {children}
         </motion.div>
@@ -56,7 +56,6 @@ export default function MentorsSection({ mentors }: MentorsSectionProps) {
         <section
             id="mentors"
             style={{
-                // Figma: w:1140, gutters (1920-1140)/2 = 390px each side
                 maxWidth: '1140px',
                 margin: 'clamp(60px, 5.21vw, 100px) auto 0',
                 padding: '0 clamp(16px, 1.67vw, 32px)',
@@ -96,7 +95,7 @@ export default function MentorsSection({ mentors }: MentorsSectionProps) {
                 </p>
             </Reveal>
 
-            {/* 3 mentor frames — 280×150px each, no border radius */}
+            {/* 3 mentor frames */}
             <div
                 style={{
                     display: 'grid',
@@ -106,16 +105,22 @@ export default function MentorsSection({ mentors }: MentorsSectionProps) {
             >
                 {items.slice(0, 3).map((mentor, i) => (
                     <Reveal key={mentor.id} delay={0.15 + i * 0.1}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            {/* Photo frame — 280×150, no radius */}
+                        <motion.div
+                            whileHover={{ y: -8, scale: 1.02 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                            style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                        >
+                            {/* Photo frame */}
                             <div
                                 style={{
                                     width: '100%',
                                     aspectRatio: '280 / 150',
                                     background: '#ffffff',
-                                    borderRadius: 0,
+                                    borderRadius: '12px',
                                     overflow: 'hidden',
                                     flexShrink: 0,
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                                    transition: 'box-shadow 0.3s ease',
                                 }}
                             >
                                 {mentor.photo_url || mentor.photo ? (
@@ -133,7 +138,7 @@ export default function MentorsSection({ mentors }: MentorsSectionProps) {
                                 ) : null}
                             </div>
 
-                            {/* Name — Raleway Bold 20, left */}
+                            {/* Name — Raleway Bold 20 */}
                             <p
                                 style={{
                                     fontFamily: 'Raleway, sans-serif',
@@ -148,13 +153,13 @@ export default function MentorsSection({ mentors }: MentorsSectionProps) {
                                 {mentor.name}
                             </p>
 
-                            {/* Title / description — Merriweather Regular 16, left */}
+                            {/* Title / description */}
                             <p
                                 style={{
                                     fontFamily: 'Merriweather, serif',
                                     fontWeight: 400,
                                     fontSize: M16,
-                                    color: '#000000',
+                                    color: '#555555',
                                     margin: 0,
                                     textAlign: 'left',
                                     lineHeight: 1.5,
@@ -165,7 +170,7 @@ export default function MentorsSection({ mentors }: MentorsSectionProps) {
                                     <><br />{mentor.organization}</>
                                 )}
                             </p>
-                        </div>
+                        </motion.div>
                     </Reveal>
                 ))}
             </div>

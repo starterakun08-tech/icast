@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useRef, useState, useMemo } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from 'framer-motion';
 import type { AboutSetting, WhyJoinCard, Timeline } from '@/types';
 
 interface MainContentProps {
@@ -17,35 +18,17 @@ const WJ22 = 'clamp(13px, 1.15vw, 22px)';    // Merriweather Regular 22 (Why Joi
 const TL28 = 'clamp(15px, 1.46vw, 28px)';    // Merriweather Bold 28 (timeline month)
 const TL22 = 'clamp(12px, 1.15vw, 22px)';    // Merriweather Regular 22 (timeline desc)
 
-// ── Shared Register Button ─────────────────────────────────────────────────
 function RegisterNowBtn({ onClick }: { onClick?: () => void }) {
     function scrollToRegister() {
         document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' });
         onClick?.();
     }
     return (
-        <button
-            onClick={scrollToRegister}
-            style={{
-                fontFamily: "'Merriweather Sans', sans-serif",
-                fontSize: BTN,
-                fontWeight: 400,
-                color: '#ffffff',
-                background: '#F97316',
-                border: 'none',
-                borderRadius: '10px',
-                width: 'clamp(150px, 13.54vw, 260px)',
-                height: 'clamp(38px, 2.86vw, 55px)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'opacity 0.2s',
-            }}
-        >
-            Register Now →
+        <button onClick={scrollToRegister} className="flow-btn">
+            <span className="arrow left">➜</span>
+            <span className="text">Register Now</span>
+            <span className="circle"></span>
+            <span className="arrow right">➜</span>
         </button>
     );
 }
@@ -357,15 +340,135 @@ function WhyJoinSection({ cards }: { cards: WhyJoinCard[] }) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// TIMELINE SECTION
+// TIMELINE SECTION (Dynamic Date-Driven Active Indicator)
 // ────────────────────────────────────────────────────────────────────────────
+function parseTimelineDate(dateStr: string): Date | null {
+    if (!dateStr) return null;
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    // Check if YYYY-MM-DD format
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+        const d = new Date(dateStr);
+        if (!isNaN(d.getTime())) return d;
+    }
+
+    // Clean range prefix e.g. "9 - 10 October" or "9–10 October" -> "10 October"
+    let cleaned = dateStr.replace(/^[0-9]+\s*[\u2013\u2014\u2015\-]\s*/, '').trim().toLowerCase();
+
+    const MONTHS: Record<string, number> = {
+        january: 0, jan: 0,
+        february: 1, feb: 1,
+        march: 2, mar: 2,
+        april: 3, apr: 3,
+        may: 4,
+        june: 5, jun: 5,
+        july: 6, jul: 6,
+        august: 7, aug: 7,
+        september: 8, sep: 8, sept: 8,
+        october: 9, oct: 9,
+        november: 10, nov: 10,
+        december: 11, dec: 11,
+    };
+
+    // Match "06 august" or "06 august 2026"
+    const dayMonthMatch = cleaned.match(/^(\d{1,2})\s+([a-z]+)(?:\s+(\d{4}))?$/i);
+    if (dayMonthMatch) {
+        const day = parseInt(dayMonthMatch[1], 10);
+        const monthName = dayMonthMatch[2];
+        const yr = dayMonthMatch[3] ? parseInt(dayMonthMatch[3], 10) : currentYear;
+        if (MONTHS[monthName] !== undefined) {
+            return new Date(yr, MONTHS[monthName], day, 23, 59, 59);
+        }
+    }
+
+    // Match "august 06" or "august 06 2026"
+    const monthDayMatch = cleaned.match(/^([a-z]+)\s+(\d{1,2})(?:\s+(\d{4}))?$/i);
+    if (monthDayMatch) {
+        const monthName = monthDayMatch[1];
+        const day = parseInt(monthDayMatch[2], 10);
+        const yr = monthDayMatch[3] ? parseInt(monthDayMatch[3], 10) : currentYear;
+        if (MONTHS[monthName] !== undefined) {
+            return new Date(yr, MONTHS[monthName], day, 23, 59, 59);
+        }
+    }
+
+    // Fallback: append currentYear explicitly
+    const fallbackDate = new Date(`${dateStr} ${currentYear}`);
+    if (!isNaN(fallbackDate.getTime())) {
+        return fallbackDate;
+    }
+
+    return null;
+}
+
+function calculateTimelineState(items: Timeline[]) {
+    if (!items || items.length === 0) return { activeIndex: 0, progressPercent: 0 };
+
+    const now = new Date();
+    const dates = items.map((item) => parseTimelineDate(item.date));
+
+    let activeIdx = -1; // Start with -1 if before any event
+    for (let i = 0; i < items.length; i++) {
+        const d = dates[i];
+        if (d && now >= d) {
+            activeIdx = i;
+        }
+    }
+
+    // If today (e.g. July 27) is before the 1st event date (Aug 6):
+    if (activeIdx === -1) {
+        return { activeIndex: 0, progressPercent: 0 };
+    }
+
+    let targetPercent = (activeIdx / Math.max(items.length - 1, 1)) * 100;
+
+    // Interpolate progress if currently between current active event and next event
+    if (activeIdx < items.length - 1) {
+        const dCurr = dates[activeIdx];
+        const dNext = dates[activeIdx + 1];
+        if (dCurr && dNext && now >= dCurr && now <= dNext) {
+            const total = dNext.getTime() - dCurr.getTime();
+            const elapsed = now.getTime() - dCurr.getTime();
+            if (total > 0) {
+                const fraction = elapsed / total;
+                const step = 100 / (items.length - 1);
+                targetPercent = activeIdx * step + fraction * step;
+            }
+        }
+    }
+
+    return { activeIndex: activeIdx, progressPercent: targetPercent };
+}
+
+function getTimelineIcon(iconName: string | null | undefined, index: number): string {
+    if (!iconName) return TL_ICONS[index % TL_ICONS.length];
+    const name = iconName.toLowerCase();
+    if (name.includes('flag') || name.includes('kickoff')) return '/images/flag.svg';
+    if (name.includes('code') || name.includes('workshop')) return '/images/code.svg';
+    if (name.includes('laptop') || name.includes('submission') || name.includes('submit')) return '/images/laptop.svg';
+    if (name.includes('trophy') || name.includes('onsite')) return '/images/trophy.svg';
+    return TL_ICONS[index % TL_ICONS.length];
+}
+
 function TimelineSection({ timelines }: { timelines: Timeline[] }) {
-    const items: Timeline[] = timelines.length > 0 ? timelines : [
-        { id: 1, date: '06 August', title: 'Kickoff', description: 'Onsite + Online', icon: 'flag', order: 0, is_active: true },
-        { id: 2, date: '10 September', title: 'Online', description: null, icon: 'laptop', order: 1, is_active: true },
-        { id: 3, date: '24 August', title: 'Online', description: null, icon: 'code', order: 2, is_active: true },
-        { id: 4, date: '9 - 10 October', title: 'iCAST Onsite', description: null, icon: 'trophy', order: 3, is_active: true },
-    ];
+    const items = useMemo(() => {
+        return timelines.length > 0 ? timelines : [
+            { id: 1, date: '06 August', title: 'Kickoff', description: 'Onsite + Online', icon: 'flag', order: 0, is_active: true },
+            { id: 2, date: '24 August', title: 'Submission', description: 'Online', icon: 'laptop', order: 1, is_active: true },
+            { id: 3, date: '10 September', title: 'Workshop', description: 'Online', icon: 'code', order: 2, is_active: true },
+            { id: 4, date: '9 - 10 October', title: 'iCAST Onsite', description: 'iCAST Onsite', icon: 'trophy', order: 3, is_active: true },
+        ];
+    }, [timelines]);
+
+    const NODE_COLORS = ['#F97316', '#FFC107', '#2E7D4F', '#1E3A8A'];
+
+    // Automatically calculate active index & progress strictly from dates in DB / Superadmin config
+    const { activeIndex, progressPercent } = useMemo(() => calculateTimelineState(items), [items]);
+
+    const currentIdx = activeIndex;
+    const currentPercent = progressPercent;
+    const currentColor = NODE_COLORS[Math.min(currentIdx, NODE_COLORS.length - 1)];
 
     return (
         <section
@@ -393,7 +496,7 @@ function TimelineSection({ timelines }: { timelines: Timeline[] }) {
                 </h2>
             </Reveal>
 
-            {/* 4-icon row with connector line HANYA di antara flag (icon 1) dan trophy (icon 4) */}
+            {/* Dynamic 4-icon row with date-driven indicator */}
             <Reveal delay={0.1}>
                 <div
                     className="tl-row"
@@ -405,82 +508,168 @@ function TimelineSection({ timelines }: { timelines: Timeline[] }) {
                         paddingTop: '16px',
                     }}
                 >
-                    {/* Horizontal connector line: berawal dari tengah icon 1 (12.5%) hingga tengah icon 4 (87.5%) */}
+                    {/* Connector line track container */}
                     <div
                         style={{
                             position: 'absolute',
-                            top: 'calc(16px + clamp(30px, 3.65vw, 70px))',
-                            left: '12.5%',
-                            right: '12.5%',
-                            height: '2px',
-                            background: '#000000',
+                            top: 'calc(20px + clamp(30px, 3.65vw, 70px))',
+                            left: `${50 / items.length}%`,
+                            right: `${50 / items.length}%`,
+                            height: '6px',
+                            marginTop: '-3px',
+                            background: '#E2E8F0',
+                            borderRadius: '3px',
                             zIndex: 0,
+                            overflow: 'visible',
                         }}
-                    />
-
-                    {items.slice(0, 4).map((item, i) => (
-                        <div
-                            key={item.id}
+                    >
+                        {/* Active Progress Fill line */}
+                        <motion.div
+                            animate={{ width: `${currentPercent}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
                             style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                position: 'relative',
-                                zIndex: 1,
-                                flex: 1,
-                                maxWidth: 'calc(25% - 12px)',
+                                height: '100%',
+                                background: 'linear-gradient(90deg, #F97316 0%, #2E7D4F 35%, #FFC107 70%, #1E3A8A 100%)',
+                                borderRadius: '3px',
+                                boxShadow: '0 0 12px rgba(46, 125, 79, 0.6)',
+                            }}
+                        />
+
+                        {/* Glowing Traveling Indicator Dot positioned dynamically at current date percentage */}
+                        <motion.div
+                            animate={{ left: `${currentPercent}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            style={{
+                                position: 'absolute',
+                                top: '50%',
+                                marginTop: '-11px',
+                                marginLeft: '-11px',
+                                width: '22px',
+                                height: '22px',
+                                zIndex: 2,
+                                pointerEvents: 'none',
                             }}
                         >
-                            {/* Icon: 140x140 */}
-                            <img
-                                src={TL_ICONS[i]}
-                                alt={item.date || `Step ${i + 1}`}
+                            <motion.div
                                 style={{
-                                    width: 'clamp(60px, 7.29vw, 140px)',
-                                    height: 'clamp(60px, 7.29vw, 140px)',
-                                    objectFit: 'contain',
+                                    width: '100%',
+                                    height: '100%',
+                                    borderRadius: '50%',
+                                    background: '#FFFFFF',
+                                    border: `3.5px solid ${currentColor}`,
+                                    boxShadow: `0 0 18px ${currentColor}AA, 0 0 28px ${currentColor}66`,
+                                    boxSizing: 'border-box',
                                 }}
-                                loading="lazy"
+                                animate={{
+                                    scale: [1, 1.28, 1],
+                                }}
+                                transition={{
+                                    repeat: Infinity,
+                                    duration: 1.5,
+                                    ease: 'easeInOut',
+                                }}
                             />
+                        </motion.div>
+                    </div>
 
+                    {/* Nodes */}
+                    {items.map((item, i) => {
+                        const isPassed = i <= currentIdx;
+                        const isCurrent = i === currentIdx;
+                        const activeColor = NODE_COLORS[i % NODE_COLORS.length];
 
-                            {/* Date — Merriweather Bold 28 */}
-                            <p
+                        return (
+                            <div
+                                key={item.id}
                                 style={{
-                                    fontFamily: 'Merriweather, serif',
-                                    fontWeight: 700,
-                                    fontSize: TL28,
-                                    color: '#000000',
-                                    margin: '0 0 4px 0',
-                                    textAlign: 'center',
-                                    lineHeight: 1.2,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    position: 'relative',
+                                    zIndex: 1,
+                                    flex: 1,
+                                    maxWidth: `calc(${100 / items.length}% - 12px)`,
                                 }}
                             >
-                                {item.date}
-                            </p>
+                                {/* Icon Wrapper with Glow & Pulse on Active */}
+                                <motion.div
+                                    animate={{
+                                        scale: isCurrent ? 1.18 : isPassed ? 1.05 : 0.9,
+                                        opacity: isPassed ? 1 : 0.5,
+                                    }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                    style={{
+                                        borderRadius: '50%',
+                                        padding: '4px',
+                                        background: isPassed ? '#FFFFFF' : 'transparent',
+                                        boxShadow: isCurrent
+                                            ? `0 0 25px ${activeColor}88, 0 0 12px ${activeColor}55`
+                                            : isPassed
+                                            ? `0 0 12px ${activeColor}44`
+                                            : 'none',
+                                        marginBottom: '8px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <img
+                                        src={getTimelineIcon(item.icon, i)}
+                                        alt={item.date || `Step ${i + 1}`}
+                                        style={{
+                                            width: 'clamp(60px, 7.29vw, 140px)',
+                                            height: 'clamp(60px, 7.29vw, 140px)',
+                                            objectFit: 'contain',
+                                            filter: isPassed ? 'none' : 'grayscale(50%)',
+                                            transition: 'filter 0.3s ease',
+                                        }}
+                                        loading="lazy"
+                                    />
+                                </motion.div>
 
-                            {/* Description — Merriweather Regular 22 */}
-                            <p
-                                style={{
-                                    fontFamily: 'Merriweather, serif',
-                                    fontWeight: 400,
-                                    fontSize: TL22,
-                                    color: '#000000',
-                                    margin: 0,
-                                    textAlign: 'center',
-                                    lineHeight: 1.4,
-                                    whiteSpace: 'pre-line',
-                                }}
-                            >
-                                {item.title}
-                                {item.description ? `\n${item.description}` : ''}
-                            </p>
-                        </div>
-                    ))}
+                                {/* Date — Merriweather Bold 28 */}
+                                <motion.p
+                                    animate={{
+                                        color: isPassed ? activeColor : '#6B7280',
+                                        scale: isCurrent ? 1.05 : 1,
+                                    }}
+                                    transition={{ duration: 0.3 }}
+                                    style={{
+                                        fontFamily: 'Merriweather, serif',
+                                        fontWeight: 700,
+                                        fontSize: TL28,
+                                        margin: '0 0 4px 0',
+                                        textAlign: 'center',
+                                        lineHeight: 1.2,
+                                    }}
+                                >
+                                    {item.date}
+                                </motion.p>
+
+                                {/* Description — Merriweather Regular 22 */}
+                                <p
+                                    style={{
+                                        fontFamily: 'Merriweather, serif',
+                                        fontWeight: isCurrent ? 700 : isPassed ? 600 : 400,
+                                        fontSize: TL22,
+                                        color: isPassed ? '#111827' : '#9CA3AF',
+                                        margin: 0,
+                                        textAlign: 'center',
+                                        lineHeight: 1.4,
+                                        whiteSpace: 'pre-line',
+                                        transition: 'color 0.3s ease',
+                                    }}
+                                >
+                                    {item.title}
+                                    {item.description ? `\n${item.description}` : ''}
+                                </p>
+                            </div>
+                        );
+                    })}
                 </div>
             </Reveal>
 
-            {/* Mobile: 2x2 grid */}
+            {/* Responsive handling */}
             <style>{`
                 @media (max-width: 640px) {
                     .tl-row {
@@ -489,6 +678,7 @@ function TimelineSection({ timelines }: { timelines: Timeline[] }) {
                     .tl-row > div {
                         max-width: 50% !important;
                         flex: 0 0 50% !important;
+                        margin-bottom: 24px;
                     }
                 }
             `}</style>

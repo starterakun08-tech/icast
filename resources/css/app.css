@@ -111,3 +111,153 @@ img {
     color: #f97316;
     border-left: 3px solid #f97316;
 }
+
+/* ─── Flow Button Animation ─────────────────────────────────────────────── */
+.flow-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    overflow: hidden;
+    width: clamp(150px, 13.54vw, 260px);
+    height: clamp(38px, 2.86vw, 55px);
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 2px solid #F97316;
+    background: #F97316;
+    color: #ffffff;
+    font-family: 'Merriweather Sans', sans-serif;
+    font-size: clamp(13px, 1.04vw, 20px);
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.25);
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.flow-btn:hover {
+    color: #F97316;
+    border-radius: 100px;
+    box-shadow: 0 8px 25px rgba(249, 115, 22, 0.35);
+}
+
+.flow-btn:active {
+    transform: scale(0.95);
+}
+
+.flow-btn .text {
+    position: relative;
+    z-index: 2;
+    transform: translateX(-12px);
+    transition: transform 0.8s ease;
+}
+
+.flow-btn:hover .text {
+    transform: translateX(12px);
+}
+
+.flow-btn .arrow {
+    position: absolute;
+    font-size: 1.1em;
+    z-index: 3;
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    line-height: 1;
+}
+
+.flow-btn .arrow.left {
+    left: -30%;
+    color: #ffffff;
+}
+
+.flow-btn:hover .arrow.left {
+    left: 20px;
+    color: #F97316;
+}
+
+.flow-btn .arrow.right {
+    right: 20px;
+    color: #ffffff;
+}
+
+.flow-btn:hover .arrow.right {
+    right: -30%;
+    color: #F97316;
+}
+
+.flow-btn .circle {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 1;
+}
+
+.flow-btn:hover .circle {
+    width: 320px;
+    height: 320px;
+    opacity: 1;
+}
+
+/* Secondary Flow Button Variant (Outline Style) */
+.flow-btn-outline {
+    background: transparent;
+    border: 2px solid #F97316;
+    color: #F97316;
+    box-shadow: none;
+}
+
+.flow-btn-outline .circle {
+    background: #F97316;
+}
+
+.flow-btn-outline:hover {
+    color: #ffffff;
+}
+
+.flow-btn-outline .arrow.left,
+.flow-btn-outline .arrow.right {
+    color: #F97316;
+}
+
+.flow-btn-outline:hover .arrow.left,
+.flow-btn-outline:hover .arrow.right {
+    color: #ffffff;
+}
+
+/* White Flow Button Variant for Dark/Orange Background (e.g. CTA section) */
+.flow-btn-white {
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    color: #F97316;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.flow-btn-white .circle {
+    background: #F97316;
+}
+
+.flow-btn-white:hover {
+    color: #ffffff;
+    border-color: #F97316;
+}
+
+.flow-btn-white .arrow.left,
+.flow-btn-white .arrow.right {
+    color: #F97316;
+}
+
+.flow-btn-white:hover .arrow.left,
+.flow-btn-white:hover .arrow.right {
+    color: #ffffff;
+}

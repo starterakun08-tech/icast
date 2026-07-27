@@ -12,10 +12,11 @@ class AboutSettingSeeder extends Seeder
         AboutSetting::updateOrCreate(
             ['id' => 1],
             [
-                'title' => 'ABOUT',
-                'body' => "The iCast Hackathon brings\ntogether student, researchers,\ndesigner, developer, and innovators\nto solve meaning ful challengges\nthrough technology",
-                'btn_primary_text' => 'Register Now →',
-                'btn_primary_url' => '#register',
+                'section_label' => 'ABOUT',
+                'heading' => 'Hackathon',
+                'body' => "The iCast Hackathon brings\ntogether student, researchers,\ndesigner, developer, and innovators\nto solve meaningful challenges\nthrough technology",
+                'cta_text' => 'Register Now →',
+                'cta_url' => '#register',
             ]
         );
     }

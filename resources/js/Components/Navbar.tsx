@@ -44,14 +44,33 @@ export default function Navbar({ transparent = true }: NavbarProps) {
             transition={{ duration: 0.4 }}
         >
             <div className="h-full px-6 lg:px-12 flex items-center justify-between mx-auto" style={{ maxWidth: '1920px' }}>
-                {/* Logo */}
+                {/* Logo with breathing glow pulse & spring hover */}
                 <Link href="/" className="flex-shrink-0">
-                    <img
-                        src="/images/icast-logo.svg"
-                        alt="iCAST Logo"
-                        style={{ height: 'clamp(36px, 3.33vw, 64px)', width: 'auto' }}
-                        loading="lazy"
-                    />
+                    <motion.div
+                        whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 20 }}
+                        style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}
+                    >
+                        <motion.img
+                            src="/images/icast-logo.svg"
+                            alt="iCAST Logo"
+                            style={{ height: 'clamp(36px, 3.33vw, 64px)', width: 'auto' }}
+                            loading="lazy"
+                            animate={{
+                                filter: [
+                                    'drop-shadow(0 0 0px rgba(249,115,22,0))',
+                                    'drop-shadow(0 0 10px rgba(249,115,22,0.5))',
+                                    'drop-shadow(0 0 0px rgba(249,115,22,0))',
+                                ],
+                            }}
+                            transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                        />
+                    </motion.div>
                 </Link>
 
                 {/* Desktop Nav */}

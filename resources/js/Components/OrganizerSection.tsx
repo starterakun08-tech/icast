@@ -65,24 +65,30 @@ export default function OrganizerSection() {
                         }}
                     >
                         {/* PENS logo — 100x100 */}
-                        <img
+                        <motion.img
                             src="/images/pens.png"
                             alt="PENS Logo"
+                            whileHover={{ scale: 1.12, rotate: 2 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                             style={{
                                 width: 'clamp(70px, 5.21vw, 100px)',
                                 height: 'clamp(70px, 5.21vw, 100px)',
                                 objectFit: 'contain',
+                                cursor: 'pointer',
                             }}
                             loading="lazy"
                         />
                         {/* MU logo — 135x100 */}
-                        <img
+                        <motion.img
                             src="/images/mu.jpg"
                             alt="Mahidol University Logo"
+                            whileHover={{ scale: 1.12, rotate: -2 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                             style={{
                                 width: 'clamp(94px, 7.03vw, 135px)',
                                 height: 'clamp(70px, 5.21vw, 100px)',
                                 objectFit: 'contain',
+                                cursor: 'pointer',
                             }}
                             loading="lazy"
                         />

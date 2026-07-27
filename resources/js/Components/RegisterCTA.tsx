@@ -110,30 +110,12 @@ export default function RegisterCTA() {
                         {/* Register Now button */}
                         <Link
                             href="/register"
-                            className="ready-cta-btn"
-                            style={{
-                                fontFamily: "'Merriweather Sans', sans-serif",
-                                fontSize: BTN,
-                                fontWeight: 400,
-                                color: '#F97316',
-                                background: '#ffffff',
-                                border: 'none',
-                                borderRadius: '10px',
-                                width: 'clamp(150px, 13.54vw, 260px)',
-                                height: 'clamp(38px, 2.86vw, 55px)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
-                                cursor: 'pointer',
-                                whiteSpace: 'nowrap',
-                                marginTop: 'clamp(4px, 0.4vw, 8px)',
-                                marginBottom: 0,
-                                textDecoration: 'none',
-                                transition: 'opacity 0.2s',
-                            }}
+                            className="flow-btn flow-btn-white ready-cta-btn"
                         >
-                            Register Now →
+                            <span className="arrow left">➜</span>
+                            <span className="text">Register Now</span>
+                            <span className="circle"></span>
+                            <span className="arrow right">➜</span>
                         </Link>
                     </div>
                 </motion.div>

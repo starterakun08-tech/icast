@@ -27,31 +27,53 @@ function HeroBtn({
     href?: string;
     onClick?: () => void;
 }) {
-    const style: React.CSSProperties = {
-        fontFamily: "'Merriweather Sans', sans-serif",
-        fontSize: BTN,
-        fontWeight: 400,
-        color: solid ? '#ffffff' : '#F97316',
-        background: solid ? '#F97316' : 'transparent',
-        border: solid ? 'none' : '2px solid #F97316',
-        borderRadius: '10px',
-        width: 'clamp(150px, 13.54vw, 260px)',
-        height: 'clamp(38px, 2.86vw, 55px)',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        textDecoration: 'none',
-        transition: 'opacity 0.2s',
-    };
+    if (!solid) {
+        const outlineStyle: React.CSSProperties = {
+            fontFamily: "'Merriweather Sans', sans-serif",
+            fontSize: BTN,
+            fontWeight: 400,
+            color: '#F97316',
+            background: 'transparent',
+            border: '2px solid #F97316',
+            borderRadius: '10px',
+            width: 'clamp(150px, 13.54vw, 260px)',
+            height: 'clamp(38px, 2.86vw, 55px)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+            textDecoration: 'none',
+            transition: 'all 0.2s ease',
+        };
+        if (href) {
+            return <Link href={href} style={outlineStyle}>{label}</Link>;
+        }
+        return (
+            <button onClick={onClick} style={outlineStyle}>
+                {label}
+            </button>
+        );
+    }
+
+    const cleanLabel = label.replace(/→|➜/g, '').trim();
+    const content = (
+        <>
+            <span className="arrow left">➜</span>
+            <span className="text">{cleanLabel}</span>
+            <span className="circle"></span>
+            <span className="arrow right">➜</span>
+        </>
+    );
+
     if (href) {
-        return <Link href={href} style={style}>{label}</Link>;
+        return <Link href={href} className="flow-btn">{content}</Link>;
     }
     return (
-        <button onClick={onClick} style={style}>
-            {label}
+        <button onClick={onClick} className="flow-btn">
+            {content}
         </button>
     );
 }
@@ -94,8 +116,8 @@ export default function HeroBanner({ hero }: HeroBannerProps) {
                     height: 'clamp(460px, 37.92vw, 728px)',
                 }}
             >
-                {/* ── Banner image — right-aligned, full visible, no crop ── */}
-                <div
+                {/* ── Banner image — right-aligned, full visible with entrance & pointing animation ── */}
+                <motion.div
                     className="hero-banner-img"
                     style={{
                         position: 'absolute',
@@ -106,8 +128,15 @@ export default function HeroBanner({ hero }: HeroBannerProps) {
                         maxWidth: '75vw',
                         flexShrink: 0,
                     }}
+                    initial={{ opacity: 0, x: 140, y: 35, scale: 0.88, filter: 'blur(6px)' }}
+                    animate={{ opacity: 1, x: 0, y: 0, scale: 1, filter: 'blur(0px)' }}
+                    transition={{
+                        duration: 1.3,
+                        ease: [0.16, 1, 0.3, 1],
+                        delay: 0.2,
+                    }}
                 >
-                    <img
+                    <motion.img
                         src="/images/banner.webp"
                         alt="iCAST Hackathon Banner"
                         style={{
@@ -118,8 +147,158 @@ export default function HeroBanner({ hero }: HeroBannerProps) {
                             display: 'block',
                         }}
                         loading="eager"
+                        animate={{
+                            y: [0, -6, 0],
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            duration: 4,
+                            ease: 'easeInOut',
+                            delay: 1.5,
+                        }}
                     />
-                </div>
+
+                    {/* Animated Pointing Light Spark at the finger tip */}
+                    <motion.div
+                        style={{
+                            position: 'absolute',
+                            top: '50.5%',
+                            left: '58.2%',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(249,115,22,1) 0%, rgba(255,193,7,0.8) 40%, transparent 70%)',
+                            boxShadow: '0 0 20px #F97316, 0 0 35px #FFC107',
+                            pointerEvents: 'none',
+                            zIndex: 5,
+                        }}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                            opacity: [0, 1, 0.7, 1],
+                            scale: [0, 1.4, 1, 1.3],
+                        }}
+                        transition={{
+                            duration: 1.2,
+                            delay: 1.4,
+                            repeat: Infinity,
+                            repeatType: 'reverse',
+                            ease: 'easeInOut',
+                        }}
+                    />
+
+                    {/* Ascending sparkles from pointing finger */}
+                    <motion.div
+                        style={{
+                            position: 'absolute',
+                            top: '48%',
+                            left: '58.5%',
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            background: '#FFC107',
+                            boxShadow: '0 0 10px #FFC107',
+                            pointerEvents: 'none',
+                            zIndex: 5,
+                        }}
+                        initial={{ opacity: 0, y: 0 }}
+                        animate={{
+                            opacity: [0, 1, 0],
+                            y: [-5, -35],
+                            scale: [0.5, 1.2, 0.2],
+                        }}
+                        transition={{
+                            duration: 1.8,
+                            delay: 1.6,
+                            repeat: Infinity,
+                            ease: 'easeOut',
+                        }}
+                    />
+
+                    {/* Animated Radar Pulse Arc Rings over logo background area */}
+                    <motion.div
+                        style={{
+                            position: 'absolute',
+                            top: '12%',
+                            left: '52%',
+                            width: '180px',
+                            height: '180px',
+                            borderRadius: '50%',
+                            border: '2px solid rgba(249,115,22,0.45)',
+                            pointerEvents: 'none',
+                            zIndex: 4,
+                        }}
+                        animate={{
+                            scale: [0.85, 1.4, 1.75],
+                            opacity: [0.7, 0.3, 0],
+                        }}
+                        transition={{
+                            duration: 3.2,
+                            repeat: Infinity,
+                            ease: 'easeOut',
+                        }}
+                    />
+                    <motion.div
+                        style={{
+                            position: 'absolute',
+                            top: '12%',
+                            left: '52%',
+                            width: '180px',
+                            height: '180px',
+                            borderRadius: '50%',
+                            border: '2px solid rgba(46,125,79,0.4)',
+                            pointerEvents: 'none',
+                            zIndex: 4,
+                        }}
+                        animate={{
+                            scale: [0.85, 1.4, 1.75],
+                            opacity: [0.7, 0.3, 0],
+                        }}
+                        transition={{
+                            duration: 3.2,
+                            repeat: Infinity,
+                            delay: 1.6,
+                            ease: 'easeOut',
+                        }}
+                    />
+
+                    {/* Staggered Dot Matrix Wave Sparkles */}
+                    <motion.div
+                        style={{
+                            position: 'absolute',
+                            top: '26%',
+                            left: '46%',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 1fr)',
+                            gap: '12px',
+                            pointerEvents: 'none',
+                            zIndex: 4,
+                        }}
+                    >
+                        {[0, 1, 2, 3, 4, 5, 6, 7].map((idx) => (
+                            <motion.span
+                                key={idx}
+                                style={{
+                                    width: '6px',
+                                    height: '6px',
+                                    borderRadius: '50%',
+                                    background: idx % 2 === 0 ? '#F97316' : '#FFC107',
+                                    boxShadow: idx % 2 === 0 ? '0 0 8px #F97316' : '0 0 8px #FFC107',
+                                    display: 'block',
+                                }}
+                                animate={{
+                                    opacity: [0.2, 1, 0.2],
+                                    scale: [0.8, 1.5, 0.8],
+                                }}
+                                transition={{
+                                    duration: 1.6,
+                                    repeat: Infinity,
+                                    delay: idx * 0.2,
+                                    ease: 'easeInOut',
+                                }}
+                            />
+                        ))}
+                    </motion.div>
+                </motion.div>
 
                 {/* ── Left text content ── */}
                 <div

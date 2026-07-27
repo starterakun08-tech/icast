@@ -13,10 +13,10 @@ const H5 = 'clamp(13px, 0.94vw, 18px)';  // Merriweather Regular 18
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.55, delay }}
+            initial={{ opacity: 0, y: 40, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.65, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
         >
             {children}
         </motion.div>
@@ -69,11 +69,12 @@ export default function PrizesSection({ prizes }: PrizesSectionProps) {
                                 borderRadius: '16px',
                                 padding: 'clamp(20px, 1.56vw, 30px)',
                                 textAlign: 'center',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                                border: '1px solid rgba(249,115,22,0.12)',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                                border: '1.5px solid rgba(249,115,22,0.15)',
+                                cursor: 'pointer',
                             }}
-                            whileHover={{ y: -4, boxShadow: '0 8px 32px rgba(249,115,22,0.18)' }}
-                            transition={{ duration: 0.2 }}
+                            whileHover={{ y: -8, scale: 1.03, boxShadow: '0 12px 36px rgba(249,115,22,0.22)' }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         >
                             {prize.icon && (
                                 <div style={{ fontSize: 'clamp(28px, 2.08vw, 40px)', marginBottom: '12px' }}>

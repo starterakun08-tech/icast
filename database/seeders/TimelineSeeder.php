@@ -20,14 +20,14 @@ class TimelineSeeder extends Seeder
                 'order'       => 1,
             ],
             [
-                'date'        => '10 September',
+                'date'        => '24 August',
                 'title'       => 'Submission',
                 'description' => 'Online',
                 'icon'        => 'laptop',
                 'order'       => 2,
             ],
             [
-                'date'        => '24 August',
+                'date'        => '10 September',
                 'title'       => 'Workshop',
                 'description' => 'Online',
                 'icon'        => 'code',
