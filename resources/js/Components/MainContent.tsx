@@ -127,9 +127,18 @@ function AboutSection({ about, onRegisterClick }: { about: AboutSetting; onRegis
                         flexWrap: 'nowrap',
                     }}
                 >
-                    {/* Left column — icast-logo (575x170) */}
+                    {/* Left column — icast-logo (575x170) with continuous floating motion */}
                     <Reveal delay={0.1}>
-                        <div
+                        <motion.div
+                            animate={{
+                                y: [-8, 8, -8],
+                                rotate: [-1, 1, -1],
+                            }}
+                            transition={{
+                                duration: 5,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
                             style={{
                                 flex: '0 0 auto',
                                 display: 'flex',
@@ -145,10 +154,11 @@ function AboutSection({ about, onRegisterClick }: { about: AboutSetting; onRegis
                                     height: 'auto',
                                     maxHeight: 'clamp(55px, 8.85vw, 170px)',
                                     objectFit: 'contain',
+                                    filter: 'drop-shadow(0 10px 25px rgba(249, 115, 22, 0.18))',
                                 }}
                                 loading="lazy"
                             />
-                        </div>
+                        </motion.div>
                     </Reveal>
 
                     {/* Right column — text */}
@@ -187,6 +197,7 @@ function AboutSection({ about, onRegisterClick }: { about: AboutSetting; onRegis
             </div>
 
             {/* Mobile: stack to column */}
+            {/* Mobile: stack to column */}
             <style>{`
                 @media (max-width: 768px) {
                     .about-cols {
@@ -197,6 +208,206 @@ function AboutSection({ about, onRegisterClick }: { about: AboutSetting; onRegis
                     }
                 }
             `}</style>
+        </section>
+    );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MAIN THEME 2026 SECTION (Continuous Floating Theme Cards)
+// ────────────────────────────────────────────────────────────────────────────
+const MAIN_THEMES = [
+    {
+        num: '01',
+        title: 'AI AND SEMICONDUCTOR DIGITALIZATION',
+        color: '#1D4ED8',
+        bg: 'rgba(29, 78, 216, 0.06)',
+        icon: (
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2" />
+                <rect x="9" y="9" width="6" height="6" />
+                <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3" />
+            </svg>
+        ),
+    },
+    {
+        num: '02',
+        title: 'FOOD SECURITY',
+        color: '#16A34A',
+        bg: 'rgba(22, 163, 74, 0.06)',
+        icon: (
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M12 8v8M9 11l3-3 3 3" />
+            </svg>
+        ),
+    },
+    {
+        num: '03',
+        title: 'MEDICAL DEVICES & PHARMACEUTICALS',
+        color: '#0D9488',
+        bg: 'rgba(13, 148, 136, 0.06)',
+        icon: (
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M9 12h6M12 9v6" />
+            </svg>
+        ),
+    },
+    {
+        num: '04',
+        title: 'ENERGY',
+        color: '#EAB308',
+        bg: 'rgba(234, 179, 8, 0.06)',
+        icon: (
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+        ),
+    },
+    {
+        num: '05',
+        title: 'DOWNSTREAMING AND INDUSTRY',
+        color: '#8B5CF6',
+        bg: 'rgba(139, 92, 246, 0.06)',
+        icon: (
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 20h20M4 20V10l4 2V8l4 2V4l8 4v12" />
+            </svg>
+        ),
+    },
+];
+
+function ThemesSection() {
+    return (
+        <section
+            id="themes"
+            style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                marginTop: 'clamp(60px, 5.21vw, 100px)',
+                padding: '0 clamp(16px, 6.67vw, 128px)',
+            }}
+        >
+            <Reveal>
+                <h2
+                    style={{
+                        fontFamily: 'Raleway, sans-serif',
+                        fontWeight: 700,
+                        fontSize: H2,
+                        color: '#F97316',
+                        margin: '0 0 clamp(8px, 0.8vw, 16px) 0',
+                        textAlign: 'center',
+                    }}
+                >
+                    MAIN THEME 2026
+                </h2>
+                <p
+                    style={{
+                        fontFamily: 'Merriweather, serif',
+                        fontWeight: 400,
+                        fontSize: H3,
+                        color: '#4B5563',
+                        margin: '0 0 clamp(24px, 2.5vw, 40px) 0',
+                        textAlign: 'center',
+                    }}
+                >
+                    Innovating Solutions Across Key National & Global Priorities
+                </p>
+            </Reveal>
+
+            {/* Continuous Floating Hexagon Theme Cards Grid */}
+            <div
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: 'clamp(16px, 1.8vw, 28px)',
+                    alignItems: 'stretch',
+                }}
+            >
+                {MAIN_THEMES.map((theme, i) => (
+                    <Reveal key={theme.num} delay={i * 0.08} style={{ display: 'flex' }}>
+                        <motion.div
+                            animate={{
+                                y: i % 2 === 0 ? [-8, 8, -8] : [8, -8, 8],
+                                rotate: i % 2 === 0 ? [-0.8, 0.8, -0.8] : [0.8, -0.8, 0.8],
+                            }}
+                            transition={{
+                                duration: 4.2 + (i % 3) * 0.5,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                            whileHover={{
+                                scale: 1.05,
+                                y: -12,
+                                boxShadow: `0 14px 32px ${theme.color}35`,
+                            }}
+                            style={{
+                                width: '100%',
+                                background: '#FFFFFF',
+                                border: `2px solid ${theme.color}`,
+                                borderRadius: '16px',
+                                padding: 'clamp(18px, 1.6vw, 28px) clamp(14px, 1.2vw, 20px)',
+                                textAlign: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '12px',
+                                cursor: 'pointer',
+                                transition: 'border-color 0.3s, box-shadow 0.3s',
+                                minHeight: '230px',
+                                justifyContent: 'space-between',
+                                boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
+                                boxSizing: 'border-box',
+                            }}
+                        >
+                            {/* Number badge */}
+                            <span
+                                style={{
+                                    fontFamily: 'Raleway, sans-serif',
+                                    fontWeight: 800,
+                                    fontSize: '18px',
+                                    color: theme.color,
+                                    background: theme.bg,
+                                    padding: '4px 14px',
+                                    borderRadius: '20px',
+                                }}
+                            >
+                                {theme.num}
+                            </span>
+
+                            {/* Icon */}
+                            <div
+                                style={{
+                                    width: '54px',
+                                    height: '54px',
+                                    borderRadius: '50%',
+                                    background: theme.bg,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                {theme.icon}
+                            </div>
+
+                            {/* Title */}
+                            <p
+                                style={{
+                                    fontFamily: 'Raleway, sans-serif',
+                                    fontWeight: 700,
+                                    fontSize: 'clamp(13px, 1vw, 16px)',
+                                    color: '#1F2937',
+                                    margin: 0,
+                                    lineHeight: 1.35,
+                                    textAlign: 'center',
+                                }}
+                            >
+                                {theme.title}
+                            </p>
+                        </motion.div>
+                    </Reveal>
+                ))}
+            </div>
         </section>
     );
 }
@@ -256,7 +467,7 @@ function WhyJoinSection({ cards }: { cards: WhyJoinCard[] }) {
                 </h2>
             </Reveal>
 
-            {/* 3-card grid: fill #FFFBF4, border berwarna, round corner 10px */}
+            {/* 3-card grid: fill #FFFBF4, border berwarna, round corner 10px with continuous floating */}
             <div
                 className="why-join-grid"
                 style={{
@@ -268,7 +479,19 @@ function WhyJoinSection({ cards }: { cards: WhyJoinCard[] }) {
             >
                 {items.slice(0, 3).map((card, i) => (
                     <Reveal key={card.id} delay={i * 0.1} style={{ height: '100%', display: 'flex' }}>
-                        <div
+                        <motion.div
+                            animate={{
+                                y: i % 2 === 0 ? [-6, 6, -6] : [6, -6, 6],
+                            }}
+                            transition={{
+                                duration: 4.5 + i * 0.5,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                            whileHover={{
+                                scale: 1.03,
+                                boxShadow: '0 12px 30px rgba(0,0,0,0.1)',
+                            }}
                             className="why-join-card"
                             style={{
                                 border: `2px solid ${WHY_OUTLINES[i] || '#F97316'}`,
@@ -281,6 +504,8 @@ function WhyJoinSection({ cards }: { cards: WhyJoinCard[] }) {
                                 alignItems: 'center',
                                 gap: '7px',
                                 boxSizing: 'border-box',
+                                transition: 'box-shadow 0.3s ease',
+                                cursor: 'pointer',
                             }}
                         >
                             {/* Icon: 140x140 */}
@@ -700,6 +925,7 @@ export default function MainContent({ about, whyJoin, timelines, onRegisterClick
     return (
         <>
             <AboutSection about={about} onRegisterClick={onRegisterClick} />
+            <ThemesSection />
             <WhyJoinSection cards={whyJoin} />
             <TimelineSection timelines={timelines} />
         </>
