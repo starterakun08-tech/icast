@@ -1,4 +1,5 @@
 import { useRef, useState, useMemo } from 'react';
+import { Link } from '@inertiajs/react';
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from 'framer-motion';
 import type { AboutSetting, WhyJoinCard, Timeline } from '@/types';
 
@@ -19,17 +20,23 @@ const TL28 = 'clamp(15px, 1.46vw, 28px)';    // Merriweather Bold 28 (timeline m
 const TL22 = 'clamp(12px, 1.15vw, 22px)';    // Merriweather Regular 22 (timeline desc)
 
 function RegisterNowBtn({ onClick }: { onClick?: () => void }) {
-    function scrollToRegister() {
-        document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' });
-        onClick?.();
+    if (onClick) {
+        return (
+            <button onClick={onClick} className="flow-btn">
+                <span className="arrow left">➜</span>
+                <span className="text">Register Now</span>
+                <span className="circle"></span>
+                <span className="arrow right">➜</span>
+            </button>
+        );
     }
     return (
-        <button onClick={scrollToRegister} className="flow-btn">
+        <Link href="/register" className="flow-btn">
             <span className="arrow left">➜</span>
             <span className="text">Register Now</span>
             <span className="circle"></span>
             <span className="arrow right">➜</span>
-        </button>
+        </Link>
     );
 }
 
