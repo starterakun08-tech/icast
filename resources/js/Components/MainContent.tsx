@@ -480,18 +480,12 @@ function WhyJoinSection({ cards }: { cards: WhyJoinCard[] }) {
                 {items.slice(0, 3).map((card, i) => (
                     <Reveal key={card.id} delay={i * 0.1} style={{ height: '100%', display: 'flex' }}>
                         <motion.div
-                            animate={{
-                                y: i % 2 === 0 ? [-6, 6, -6] : [6, -6, 6],
-                            }}
-                            transition={{
-                                duration: 4.5 + i * 0.5,
-                                repeat: Infinity,
-                                ease: 'easeInOut',
-                            }}
                             whileHover={{
-                                scale: 1.03,
+                                y: -6,
+                                scale: 1.02,
                                 boxShadow: '0 12px 30px rgba(0,0,0,0.1)',
                             }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                             className="why-join-card"
                             style={{
                                 border: `2px solid ${WHY_OUTLINES[i] || '#F97316'}`,
