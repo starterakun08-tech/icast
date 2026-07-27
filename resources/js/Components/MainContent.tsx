@@ -549,7 +549,7 @@ function WhyJoinSection({ cards }: { cards: WhyJoinCard[] }) {
                                     {card.description}
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     </Reveal>
                 ))}
             </div>
