@@ -1,0 +1,113 @@
+/* ─── Google Fonts (must be first) ───────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&family=Merriweather:wght@300;400;700&family=Merriweather+Sans:wght@300;400;700&display=swap");
+
+@import "tailwindcss";
+
+/* ─── Design Tokens ───────────────────────────────────────────────────────── */
+@theme {
+    --color-brand-orange: #f97316;
+    --color-brand-amber: #ffc107;
+    --color-brand-green: #2e7d4f;
+    --color-brand-lime: #02fe4f;
+    --color-bg-base: #fff6e9;
+    --color-text-primary: #000000;
+    --color-text-white: #ffffff;
+
+    --font-heading: "Raleway", sans-serif;
+    --font-body: "Merriweather", serif;
+    --font-sans-body: "Merriweather Sans", sans-serif;
+
+    --max-w-canvas: 1440px;
+    --max-w-content: 1290px;
+}
+
+/* ─── Global Reset & Base ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #fff6e9;
+    font-family: "Merriweather", serif;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Raleway", sans-serif;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ─── Utility Classes ─────────────────────────────────────────────────────── */
+.font-heading {
+    font-family: "Raleway", sans-serif;
+}
+
+.font-body {
+    font-family: "Merriweather", serif;
+}
+
+.bg-base {
+    background-color: #fff6e9;
+}
+
+.canvas-max {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content-max {
+    max-width: 1290px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ─── Smooth Scroll Offset for Sticky Nav ─────────────────────────────────── */
+[id] {
+    scroll-margin-top: 160px;
+}
+
+/* ─── Admin Sidebar ───────────────────────────────────────────────────────── */
+.admin-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    font-family: "Raleway", sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.admin-sidebar-link:hover {
+    background-color: #fff6e9;
+    color: #f97316;
+}
+
+.admin-sidebar-link.active {
+    background-color: #fff6e9;
+    color: #f97316;
+    border-left: 3px solid #f97316;
+}
